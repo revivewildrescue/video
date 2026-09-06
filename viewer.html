@@ -1,1 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
 
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Pannellum Viewer</title>
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/pannellum@2.5.7/build/pannellum.css"
+  >
+
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    #panorama {
+      width: 100%;
+      height: 100%;
+    }
+
+    #error {
+      display: none;
+      position: fixed;
+      inset: 0;
+      padding: 30px;
+      background: #111;
+      color: white;
+      font-family: Arial, sans-serif;
+      box-sizing: border-box;
+    }
+
+    #error h2 {
+      margin-top: 0;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="panorama"></div>
+
+  <div id="error">
+    <h2>Unable to load panorama</h2>
+    <p id="error-message"></p>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.7/build/pannellum.js"></script>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const configURL = params.get("config");
+
+    const errorBox = document.getElementById("error");
+    const errorMessage = document.getElementById("error-message");
+
+    function showError(message) {
+      errorBox.style.display = "block";
+      errorMessage.textContent = message;
+    }
+
+    if (!configURL) {
+      showError("No config file was specified.");
+    } else {
+      fetch(configURL)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(
+              "Config request failed: HTTP " + response.status
+            );
+          }
+
+          return response.json();
+        })
+        .then(config => {
+
+          config.autoLoad = config.autoLoad !== false;
+
+          pannellum.viewer("panorama", config);
+
+        })
+        .catch(error => {
+          console.error(error);
+          showError(error.message);
+        });
+    }
+  </script>
+
+</body>
+</html>
