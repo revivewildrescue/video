@@ -1,0 +1,9 @@
+{
+  "type": "equirectangular",
+  "panorama": "../panoramas/demo.jpg",
+  "autoLoad": true,
+  "pitch": 0,
+  "yaw": 0,
+  "hfov": 100,
+  "showControls": true
+}
